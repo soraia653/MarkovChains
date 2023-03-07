@@ -1,42 +1,73 @@
+"""Generate pokemon names using Markov Chains algorithm."""
 import random
+import sys
 
-txt = "The unicorn is a legendary creature that has been described since antiquity as a beast with a large, pointed, spiraling horn projecting from its forehead. The unicorn was depicted in ancient seals of the Indus Valley Civilization and was mentioned by the ancient Greeks in accounts of natural history by various writers, including Ctesias, Strabo, Pliny the Younger, and Aelian. The Bible also describes an animal, the re'em, which some translations have erroneously rendered with the word unicorn. In European folklore, the unicorn is often depicted as a white horse-like or goat-like animal with a long horn and cloven hooves (sometimes a goat's beard). In the Middle Ages and Renaissance, it was commonly described as an extremely wild woodland creature, a symbol of purity and grace, which could only be captured by a virgin. In the encyclopedias its horn was said to have the power to render poisoned water potable and to heal sickness. In medieval and Renaissance times, the tusk of the narwhal was sometimes sold as unicorn horn."
+ORDER = 2
 
-order = 4
+# import .txt file based on user preference
+OPTIONS = ["-hp", "-pkm"]
+FILE_OPTIONS = {"-hp": "data/hp_spells.txt", "-pkm": "data/pokemon_names.txt"}
+
+try:
+    ARG = sys.argv[1]
+except IndexError as exc:
+    raise SystemExit(
+        "Use CL argument -hp to generate a Harry Potter spell or -pkm to generate a Pokemon name."
+    ) from exc
+
+if ARG in OPTIONS and len(sys.argv) == 2:
+    with open(FILE_OPTIONS[ARG], "r", encoding="utf-8") as f:
+        data = f.readlines()
+        f.close()
+else:
+    raise SystemExit("Available options are -hp or -pkm. You can't use both.")
+
 ngrams = {}
+beginnings = []
 
-# generate text based on input
-def MarkovIt():
-    currentGram = txt[0:order]
-    result = currentGram
 
-    for i in range(10):
+def markov_it():
+    """generate text based on input"""
+    current_gram = random.choice(beginnings)
+    result = current_gram
+
+    for _ in range(10):
         try:
-            possibilities = ngrams[currentGram]
+            possibilities = ngrams[current_gram]
             next = random.choice(possibilities)
             result += next
             length = len(result)
-            currentGram = result[length - order : length]
+            current_gram = result[length - ORDER : length]
         except IndexError:
             break
-
 
     print(result)
 
 
-for i, v in enumerate(txt[: len(txt) - order + 1]):
-    gram = txt[i : i + order]
+def main():
+    for j, v in enumerate(data):
+        txt = data[j]
 
-    if gram not in ngrams:
-        ngrams[gram] = []
-        try:
-            ngrams[gram].append(txt[i + order])
-        except IndexError:
-            break
-    else:
-        try:
-            ngrams[gram].append(txt[i + order])
-        except IndexError:
-            break
+        for i, v in enumerate(txt[: len(txt) - ORDER + 1]):
+            gram = txt[i : i + ORDER]
 
-MarkovIt()
+            if i == 0:
+                beginnings.append(gram)
+
+            if gram not in ngrams:
+                ngrams[gram] = []
+                try:
+                    ngrams[gram].append(txt[i + ORDER])
+                except IndexError:
+                    break
+            else:
+                try:
+                    ngrams[gram].append(txt[i + ORDER])
+                except IndexError:
+                    break
+
+    markov_it()
+
+
+if __name__ == "__main__":
+    main()
