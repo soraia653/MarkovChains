@@ -18,9 +18,4 @@ python main.py -hp
 
 ## Explanation
 
-1. install pyenv
-2. install python version 3.10.4
-3. install poetry
-4. set pyenv pyenv local 3.10.4
-5. make poetry use same python version
-6. installed pytest, pycoverage, pre-commit
+TBD
