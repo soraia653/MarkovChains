@@ -44,11 +44,11 @@ def markov_it():
     print(result)
 
 
-def main():
-    for j, v in enumerate(data):
-        txt = data[j]
+def prepare_data(dt):
+    for j, v in enumerate(dt):
+        txt = dt[j]
 
-        for i, v in enumerate(txt[: len(txt) - ORDER + 1]):
+        for i, v in enumerate(txt[: len(txt)]):
             gram = txt[i : i + ORDER]
 
             if i == 0:
@@ -66,6 +66,9 @@ def main():
                 except IndexError:
                     break
 
+
+def main():
+    prepare_data(data)
     markov_it()
 
 
